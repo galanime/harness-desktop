@@ -1,0 +1,92 @@
+name: Sync Upstream & Release
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 每天 UTC 02:00 探测上游 deepseek-harness 是否发布新版本
+    - cron: '0 2 * * *'
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  # 探测上游：有新版本则 bump 应用版本、更新标记、推送新 tag（tag 会触发 build 任务）
+  check:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      release_needed: ${{ steps.decide.outputs.release_needed }}
+      upstream_version: ${{ steps.decide.outputs.upstream_version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: upstream
+        run: echo "version=$(npm view @deepseek-ai/dsh version)" >> "$GITHUB_OUTPUT"
+      - id: decide
+        run: |
+          LAST=$(node -p "require('./harness-upstream.json').lastSyncedVersion")
+          UP="${{ steps.upstream.outputs.version }}"
+          echo "upstream_version=$UP" >> "$GITHUB_OUTPUT"
+          if [ -n "$UP" ] && [ "$LAST" != "$UP" ]; then
+            echo "release_needed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "release_needed=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Bump version, update marker, push tag
+        if: steps.decide.outputs.release_needed == 'true'
+        run: |
+          UP="${{ steps.decide.outputs.upstream_version }}"
+          npm version patch --no-git-tag-version
+          node -e "const fs=require('fs');const j=JSON.parse(fs.readFileSync('harness-upstream.json','utf8'));j.lastSyncedVersion='$UP';fs.writeFileSync('harness-upstream.json',JSON.stringify(j,null,2)+'\n')"
+          V=$(node -p "require('./package.json').version")
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add package.json package-lock.json harness-upstream.json
+          git commit -m "chore: 同步上游 harness $UP → 应用 v$V" || true
+          git tag "v$V"
+          git push origin HEAD:main
+          git push origin "v$V"
+          echo "app_version=$V" >> "$GITHUB_ENV"
+
+  # tag 推送时打包 macOS arm64 并发布 GitHub Release（electron-updater 通道）
+  build:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install vision MCP dependencies
+        working-directory: mcp/qwen-vision-mcp
+        run: npm ci
+
+      - name: Generate icons
+        run: npm run build:icons
+
+      - name: Install upstream harness runtime
+        run: npm run install:harness
+
+      - name: Package & publish GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder --mac arm64 --publish always
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-arm64
+          path: |
+            dist/*.dmg
+            dist/*.zip
+            dist/latest*.yml

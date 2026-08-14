@@ -1,0 +1,18 @@
+{
+  "name": "qwen-vision-mcp",
+  "version": "0.1.0",
+  "description": "Local Qwen-VL (Qwen3-VL) vision MCP server: image understanding, captioning, and OCR through a local Ollama endpoint — the vision backend for DeepSeek Harness Desktop.",
+  "license": "MIT",
+  "type": "module",
+  "main": "server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.4.3"
+  }
+}

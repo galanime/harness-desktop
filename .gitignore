@@ -1,0 +1,26 @@
+node_modules/
+dist/
+out/
+*.log
+.DS_Store
+.idea/
+.vscode/
+
+# Generated harness runtime (installed by scripts/install-harness.mjs)
+harness-runtime/
+
+# Local icon intermediates
+build/icon.iconset/
+build/icon.icns
+build/icon.png
+build/iconTemplate.png
+build/iconTemplate@2x.png
+build/dmg-background.png
+brand/*.png
+
+# Local test artifacts
+.tmp/
+.npm-cache/
+.electron-cache/
+mcp/qwen-vision-mcp/node_modules/
+mcp/qwen-vision-mcp/.test-client.mjs

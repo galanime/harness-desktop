@@ -1,0 +1,38 @@
+{
+  "name": "deepseek-harness-desktop",
+  "productName": "DeepSeek Harness Desktop",
+  "version": "0.1.0",
+  "description": "Independent macOS desktop app for DeepSeek Harness: stays in sync with the upstream GitHub project, self-updates, and bundles a local Qwen-VL (Qwen3-VL) vision MCP server for image understanding.",
+  "license": "MIT",
+  "author": {
+    "name": "galanime",
+    "email": "galanime@users.noreply.github.com"
+  },
+  "homepage": "https://github.com/galanime/harness-desktop",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/galanime/harness-desktop.git"
+  },
+  "main": "src/main/index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "electron .",
+    "build:icons": "node scripts/build-icons.mjs",
+    "install:harness": "node scripts/install-harness.mjs",
+    "setup": "npm run install:harness && npm run build:icons",
+    "package": "npm run setup && electron-builder --mac arm64 --publish never",
+    "dist": "npm run setup && electron-builder --mac arm64 --publish never",
+    "release": "npm run setup && electron-builder --mac arm64 --publish always"
+  },
+  "devDependencies": {
+    "electron": "^43.4.0",
+    "electron-builder": "^26.15.3",
+    "sharp": "^0.35.3"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9"
+  }
+}

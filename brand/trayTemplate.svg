@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- macOS 托盘模板图标：纯黑 H 缰绳标记（系统按亮暗自动着色） -->
+  <rect x="7.5" y="5" width="4.6" height="22" rx="2.3" fill="#000000"/>
+  <rect x="19.9" y="5" width="4.6" height="22" rx="2.3" fill="#000000"/>
+  <rect x="6.4" y="12.2" width="19.2" height="7.6" rx="3.8" fill="#000000"/>
+  <rect x="17.2" y="14.1" width="3.2" height="3.8" rx="1" fill="#FFFFFF"/>
+</svg>

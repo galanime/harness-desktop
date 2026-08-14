@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>控制中心 — DeepSeek Harness Desktop</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <svg class="logo" viewBox="0 0 1024 1024" aria-label="logo">
+        <rect x="32" y="32" width="960" height="960" rx="220" fill="url(#g)" />
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#2a2f6e" />
+            <stop offset="1" stop-color="#4d6bfe" />
+          </linearGradient>
+        </defs>
+        <g>
+          <rect x="316" y="300" width="120" height="424" rx="60" fill="rgba(255,255,255,0.92)" />
+          <rect x="588" y="300" width="120" height="424" rx="60" fill="rgba(255,255,255,0.92)" />
+          <rect x="300" y="440" width="424" height="144" rx="60" fill="rgba(255,255,255,0.92)" />
+          <rect x="560" y="478" width="76" height="68" rx="12" fill="#2a2f6e" />
+        </g>
+        <path d="M180 512 a332 332 0 0 1 150 -268" stroke="rgba(94,234,212,0.9)" stroke-width="46" fill="none" stroke-linecap="round" />
+        <path d="M844 512 a332 332 0 0 1 -150 -268" stroke="rgba(94,234,212,0.9)" stroke-width="46" fill="none" stroke-linecap="round" />
+        <circle cx="812" cy="794" r="34" fill="#5eead4" />
+      </svg>
+      <div class="topbar-title">
+        <h1>控制中心</h1>
+        <p>DeepSeek Harness Desktop · <span id="app-version">…</span></p>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>运行状态</h2>
+        <div class="kv">
+          <div class="row"><span>Harness 进程</span><b id="st-harness">检测中…</b></div>
+          <div class="row"><span>本地地址</span><b id="st-url">—</b></div>
+          <div class="row"><span>已安装 Harness 版本</span><b id="st-installed">—</b></div>
+          <div class="row"><span>上游最新版本</span><b id="st-upstream">—</b></div>
+          <div class="row"><span>上游 master 最新提交</span><b id="st-sha">—</b></div>
+          <div class="row"><span>识图模型</span><b id="st-model">—</b></div>
+          <div class="row"><span>Ollama</span><b id="st-ollama">—</b></div>
+        </div>
+        <div class="actions">
+          <button id="btn-main" class="primary">打开 Harness 主界面</button>
+          <button id="btn-restart">重启 Harness</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>同步与更新</h2>
+        <p class="hint">
+          与上游 <a href="#" data-url="https://github.com/deepseek-ai/deepseek-harness">deepseek-ai/deepseek-harness</a>
+          保持同步：上游发布新版本时，一键（或自动）拉取 npm 发行版并热切换；应用本体通过 GitHub Releases 自更新。
+        </p>
+        <div class="actions">
+          <button id="btn-sync" class="primary">立即同步 Harness 源码</button>
+          <button id="btn-update">检查应用更新</button>
+        </div>
+        <div id="sync-status" class="statusline">尚未执行同步。</div>
+        <div id="update-status" class="statusline">尚未检查应用更新。</div>
+      </section>
+
+      <section class="card">
+        <h2>识图模型（本地千问 Qwen3-VL）</h2>
+        <p class="hint">
+          识图完全在本机进行：harness 通过 <code>mcp__qwen-vision__*</code> 工具调用本机 Ollama 推理，图片不会上传。
+        </p>
+        <div class="row" style="margin-bottom: 10px">
+          <label for="model-input">模型名</label>
+          <input id="model-input" value="qwen3-vl:4b" spellcheck="false" />
+        </div>
+        <div class="row" style="margin-bottom: 12px">
+          <label for="ollama-input">Ollama 地址</label>
+          <input id="ollama-input" value="http://127.0.0.1:11434" spellcheck="false" />
+        </div>
+        <div class="actions">
+          <button id="btn-pull" class="primary">下载/更新模型</button>
+          <button id="btn-ollama">启动 Ollama</button>
+          <button id="btn-save-model">保存并应用</button>
+        </div>
+        <div class="progress-wrap hidden" id="pull-wrap">
+          <div class="progress"><div class="progress-bar" id="pull-bar"></div></div>
+          <div class="statusline" id="pull-status"></div>
+        </div>
+        <div class="statusline" id="model-status">检测中…</div>
+      </section>
+
+      <section class="card">
+        <h2>设置</h2>
+        <div class="row switch">
+          <span>自动检查上游并提示同步</span>
+          <input type="checkbox" id="set-autosync" checked />
+        </div>
+        <div class="row switch">
+          <span>自动检查应用更新</span>
+          <input type="checkbox" id="set-autoupdate" checked />
+        </div>
+      </section>
+
+      <section class="card about">
+        <h2>关于</h2>
+        <p>
+          <b>DeepSeek Harness Desktop</b> 是 DeepSeek Harness 的独立社区桌面封装：
+          内置 harness 运行时同步、应用自更新与本地千问识图 MCP，数据与配置与 CLI 版完全隔离。
+        </p>
+        <ul>
+          <li>应用许可：MIT（© 2026 galanime and contributors）</li>
+          <li>DeepSeek Harness：MIT（© DeepSeek）</li>
+          <li>Qwen3-VL 模型权重：Apache-2.0（© Alibaba Cloud）</li>
+          <li>Ollama / Electron / MCP SDK：MIT</li>
+        </ul>
+        <div class="actions">
+          <button data-url="https://github.com/galanime/harness-desktop">项目主页</button>
+          <button data-url="https://github.com/deepseek-ai/deepseek-harness">上游仓库</button>
+          <button id="btn-logs">打开日志目录</button>
+          <button id="btn-home">打开数据目录</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+appId: com.galanime.deepseek-harness-desktop
+productName: DeepSeek Harness Desktop
+copyright: "Copyright © 2026 galanime and DeepSeek Harness Desktop contributors. DeepSeek Harness is © DeepSeek (MIT)."
+artifactName: "${productName}-${version}-${arch}.${ext}"
+
+directories:
+  output: dist
+  buildResources: build
+
+files:
+  - "src/**/*"
+  - "package.json"
+  - "!**/*.map"
+  - "!**/*.md"
+
+asar: true
+
+extraResources:
+  - from: "harness-runtime"
+    to: "harness-runtime"
+    filter:
+      - "**/*"
+      - "!**/.package-lock.json"
+  - from: "mcp/qwen-vision-mcp"
+    to: "vision-mcp"
+    filter:
+      - "**/*"
+      - "!**/*.map"
+      - "!**/.git*"
+  - from: "brand"
+    to: "brand"
+    filter:
+      - "logo.svg"
+      - "icon.png"
+      - "LICENSE.txt"
+      - "NOTICE.txt"
+
+mac:
+  category: public.app-category.developer-tools
+  icon: build/icon.icns
+  target:
+    - target: dmg
+      arch:
+        - arm64
+    - target: zip
+      arch:
+        - arm64
+  identity: null
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  extendInfo:
+    NSHumanReadableCopyright: "Copyright © 2026 galanime. DeepSeek Harness is © DeepSeek (MIT)."
+    LSApplicationCategoryType: public.app-category.developer-tools
+
+dmg:
+  title: "${productName} ${version}"
+  iconSize: 96
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+  background: build/dmg-background.png
+  window:
+    width: 540
+    height: 400
+
+publish:
+  provider: github
+  owner: galanime
+  repo: harness-desktop
+  releaseType: release
