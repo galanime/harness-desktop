@@ -70,7 +70,7 @@ export class SyncService extends EventEmitter {
     }
     this.syncing = true;
     this.emit('sync-state', { state: 'syncing' });
-    const target = ensureDir(runtimeHarnessDir());
+    const target = ensureDir(path.join(runtimeHarnessDir(), 'lib'));
     const pkgFile = path.join(target, 'package.json');
     if (!fs.existsSync(pkgFile)) {
       fs.writeFileSync(

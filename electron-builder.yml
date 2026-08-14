@@ -1,7 +1,7 @@
 appId: com.galanime.deepseek-harness-desktop
 productName: DeepSeek Harness Desktop
 copyright: "Copyright © 2026 galanime and DeepSeek Harness Desktop contributors. DeepSeek Harness is © DeepSeek (MIT)."
-artifactName: "${productName}-${version}-${arch}.${ext}"
+artifactName: "DeepSeek-Harness-Desktop-${version}-${arch}.${ext}"
 
 directories:
   output: dist
@@ -16,22 +16,23 @@ files:
 asar: true
 
 extraResources:
+  # 注意：electron-builder 会排除 from 根级 node_modules，
+  # 因此所有载荷（依赖）统一下沉到 lib/ 子目录。
   - from: "harness-runtime"
     to: "harness-runtime"
     filter:
-      - "**/*"
-      - "!**/.package-lock.json"
+      - "lib/**"
   - from: "mcp/qwen-vision-mcp"
     to: "vision-mcp"
     filter:
-      - "**/*"
-      - "!**/*.map"
-      - "!**/.git*"
+      - "lib/**"
   - from: "brand"
     to: "brand"
     filter:
       - "logo.svg"
       - "icon.png"
+      - "trayTemplate.png"
+      - "trayTemplate@2x.png"
       - "LICENSE.txt"
       - "NOTICE.txt"
 

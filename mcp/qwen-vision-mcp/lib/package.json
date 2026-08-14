@@ -1,0 +1,12 @@
+{
+  "name": "qwen-vision-mcp",
+  "version": "0.1.0",
+  "description": "Local Qwen-VL (Qwen3-VL) vision MCP server — runtime payload (lib/node_modules).",
+  "license": "MIT",
+  "type": "module",
+  "main": "server.js",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.4.3"
+  }
+}

@@ -26,8 +26,16 @@ export class HarnessManager extends EventEmitter {
   /** 解析实际使用的 harness 安装目录（用户目录优先）。 */
   resolveInstallDir() {
     for (const dir of [runtimeHarnessDir(), bundledHarnessDir()]) {
-      const bin = path.join(dir, 'node_modules', '@deepseek-ai', 'dsh', 'lib', 'bin.js');
-      if (fs.existsSync(bin)) return { dir, bin };
+      const bin = path.join(
+        dir,
+        'lib',
+        'node_modules',
+        '@deepseek-ai',
+        'dsh',
+        'lib',
+        'bin.js'
+      );
+      if (fs.existsSync(bin)) return { dir: path.join(dir, 'lib'), bin };
     }
     return null;
   }
@@ -112,11 +120,15 @@ export class HarnessManager extends EventEmitter {
       OLLAMA_HOST: settings.ollamaHost,
       QWEN_VL_MODEL: settings.visionModel,
     });
-    const child = spawn(node.command, ['--profile', 'web', '--host', '127.0.0.1', '--port', String(port)], {
-      cwd: resolved.dir,
-      env,
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
+    const child = spawn(
+      node.command,
+      [resolved.bin, '--profile', 'web', '--host', '127.0.0.1', '--port', String(port)],
+      {
+        cwd: resolved.dir,
+        env,
+        stdio: ['ignore', 'pipe', 'pipe'],
+      }
+    );
     this.child = child;
     child.stdout.pipe(logStream);
     child.stderr.pipe(logStream);

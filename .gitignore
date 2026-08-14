@@ -22,5 +22,6 @@ brand/*.png
 .tmp/
 .npm-cache/
 .electron-cache/
-mcp/qwen-vision-mcp/node_modules/
+mcp/qwen-vision-mcp/lib/node_modules/
 mcp/qwen-vision-mcp/.test-client.mjs
+mcp/qwen-vision-mcp/lib/.test-client.mjs

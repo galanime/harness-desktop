@@ -11,12 +11,13 @@ import os from 'node:os';
 let cached = null;
 
 const CANDIDATES = [
-  process.env.NODE,
   path.join(os.homedir(), '.local', 'bin', 'node'),
   '/opt/homebrew/bin/node',
   '/usr/local/bin/node',
   '/opt/local/bin/node',
   '/usr/bin/node',
+  // 环境变量 NODE 可能指向外壳运行时（如 hermes），放到最后兜底
+  process.env.NODE,
 ].filter(Boolean);
 
 export function resolveNode() {
@@ -34,17 +35,25 @@ export function resolveNode() {
       const version = execFileSync(candidate, ['--version'], { timeout: 5000 })
         .toString()
         .trim();
-      if (/^v(\d+)/.test(version) && Number(RegExp.$1) >= 20) {
-        cached = {
-          command: candidate,
-          asNode: false,
-          version,
-          description: `系统 Node ${version}`,
-        };
-        return cached;
-      }
+      if (!/^v(\d+)/.test(version) || Number(RegExp.$1) < 20) continue;
+      // 强度探针：必须是标准 Node（支持 ESM + worker），过滤 Hermes 等外壳运行时
+      const probe = execFileSync(
+        candidate,
+        ['--input-type=module', '-e', "import{spawn}from'node:child_process';console.log('ok')"],
+        { timeout: 8000 }
+      )
+        .toString()
+        .trim();
+      if (probe !== 'ok') continue;
+      cached = {
+        command: candidate,
+        asNode: false,
+        version,
+        description: `系统 Node ${version}`,
+      };
+      return cached;
     } catch {
-      /* 跳过不可执行候选 */
+      /* 跳过不可执行/不兼容候选 */
     }
   }
   cached = {

@@ -23,9 +23,9 @@
     "build:icons": "node scripts/build-icons.mjs",
     "install:harness": "node scripts/install-harness.mjs",
     "setup": "npm run install:harness && npm run build:icons",
-    "package": "npm run setup && electron-builder --mac arm64 --publish never",
-    "dist": "npm run setup && electron-builder --mac arm64 --publish never",
-    "release": "npm run setup && electron-builder --mac arm64 --publish always"
+    "package": "npm run setup && electron-builder --mac --arm64 --publish never",
+    "dist": "npm run setup && electron-builder --mac --arm64 --publish never",
+    "release": "npm run setup && electron-builder --mac --arm64 --publish always"
   },
   "devDependencies": {
     "electron": "^43.4.0",

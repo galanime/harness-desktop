@@ -7,15 +7,30 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const target = path.join(root, 'harness-runtime');
+const target = path.join(root, 'harness-runtime', 'lib');
 const version = process.argv[2] || 'latest';
 
-const npmCandidates = ['/opt/homebrew/bin/npm', '/usr/local/bin/npm', '/opt/local/bin/npm', '/usr/bin/npm'];
+const npmCandidates = [
+  process.env.NPM,
+  path.join(process.env.HOME || '', '.local', 'bin', 'npm'),
+  '/opt/homebrew/bin/npm',
+  '/usr/local/bin/npm',
+  '/opt/local/bin/npm',
+  '/usr/bin/npm',
+].filter(Boolean);
 let npm = null;
 for (const candidate of npmCandidates) {
   if (fs.existsSync(candidate)) {
     npm = candidate;
     break;
+  }
+}
+if (!npm) {
+  try {
+    const which = execFileSync('which', ['npm'], { timeout: 3000 }).toString().trim();
+    if (which) npm = which;
+  } catch {
+    /* 无 which */
   }
 }
 if (!npm) {

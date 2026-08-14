@@ -68,7 +68,7 @@ jobs:
 
       - name: Install vision MCP dependencies
         working-directory: mcp/qwen-vision-mcp
-        run: npm ci
+        run: npm ci --prefix lib
 
       - name: Generate icons
         run: npm run build:icons
@@ -80,7 +80,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        run: npx electron-builder --mac arm64 --publish always
+        run: npx electron-builder --mac --arm64 --publish always
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

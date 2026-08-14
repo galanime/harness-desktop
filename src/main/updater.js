@@ -44,7 +44,13 @@ export class UpdaterService extends EventEmitter {
   }
 
   async check(silent = true) {
-    const updater = await this.loadUpdater();
+    let updater;
+    try {
+      updater = await this.loadUpdater();
+    } catch (err) {
+      this.setState({ phase: 'error', message: `自更新模块加载失败：${err?.message || err}` });
+      return { error: err?.message || String(err) };
+    }
     if (!updater) {
       this.setState({ phase: 'dev' });
       return { skipped: true, reason: 'dev' };

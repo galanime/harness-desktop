@@ -13,7 +13,7 @@ export function writeHarnessPatch() {
   const settings = loadSettings();
   const home = ensureDir(dshHomeDir());
   const node = resolveNode();
-  const serverPath = path.join(bundledVisionMcpDir(), 'server.js');
+  const serverPath = path.join(bundledVisionMcpDir(), 'lib', 'server.js');
 
   const yaml = [
     '# DeepSeek Harness Desktop 自动生成 —— 请勿手工编辑，应用启动时会覆盖。',
@@ -33,6 +33,9 @@ export function writeHarnessPatch() {
     ...(node.asNode ? ['          ELECTRON_RUN_AS_NODE: \'1\''] : []),
     '        reconnect:',
     '          enabled: true',
+    '        # 本机 4B 视觉模型冷启动 + 推理可能超过默认 60s',
+    '        toolCallTimeoutMs: 300000',
+    '        failOnStartupError: false',
     '',
   ].join('\n');
 

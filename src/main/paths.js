@@ -13,7 +13,10 @@ export function resourcesDir() {
   return isPackaged ? process.resourcesPath : DEV_ROOT;
 }
 
-/** 打包时随应用分发的 harness 运行时（npm 安装的 @deepseek-ai/dsh）。 */
+/** 载荷统一放在 lib/ 子目录（electron-builder 会排除根级 node_modules）。 */
+export const LIB = 'lib';
+
+/** 打包时随应用分发的 harness 运行时（npm 安装的 @deepseek-ai/dsh，位于 lib/ 下）。 */
 export function bundledHarnessDir() {
   return path.join(resourcesDir(), 'harness-runtime');
 }
@@ -23,9 +26,11 @@ export function runtimeHarnessDir() {
   return path.join(app.getPath('userData'), 'harness');
 }
 
-/** 打包时随应用分发的识图 MCP 服务器目录。 */
+/** 识图 MCP 服务器目录（打包后位于 Resources/vision-mcp；开发模式为仓库 mcp/qwen-vision-mcp）。 */
 export function bundledVisionMcpDir() {
-  return path.join(resourcesDir(), 'vision-mcp');
+  return isPackaged
+    ? path.join(process.resourcesPath, 'vision-mcp')
+    : path.join(DEV_ROOT, 'mcp', 'qwen-vision-mcp');
 }
 
 export function brandDir() {
