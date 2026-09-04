@@ -1,7 +1,7 @@
 {
   "name": "deepseek-harness-desktop",
   "productName": "DeepSeek Harness Desktop",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Independent macOS desktop app for DeepSeek Harness: stays in sync with the upstream GitHub project, self-updates, and bundles a local Qwen-VL (Qwen3-VL) vision MCP server for image understanding.",
   "license": "MIT",
   "author": {
